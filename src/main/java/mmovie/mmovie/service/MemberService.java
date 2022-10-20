@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -19,10 +21,10 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     /**
-    * 회원 등록
-    * */
+     * 회원을 추가하는 api
+     * */
     @Transactional
-    public Long create(MemberDto memberDto) {
+    public Long createMembers(MemberDto memberDto) {
 
         Member member = Member.builder()
                 .email(memberDto.getEmail())
@@ -38,22 +40,42 @@ public class MemberService {
     * 유효성 검사 로직
     * */
     private void validateDuplicateMember(Member member){
-        List<Member> findMembers = memberRepository.findByEmail(member.getEmail());
-        log.info(" =========== findMembers : "+findMembers.size());
-        if(findMembers.size() > 0){
+        List<Member> getMembers = memberRepository.findByEmail(member.getEmail());
+        if(getMembers.size() > 0){
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
 
     /**
-    * 한명의 유저 조회
-    * */
-    public List<Member> findMembers(){
+     * 회원 하나 불러오는 api
+     * */
+    public MemberDto getMembers(Long id) {
+       try {
+           Member member = memberRepository.getReferenceById(id);
+           return new MemberDto(member.getEmail(),member.getPassword());
+       }catch (Exception e){
+           throw new IllegalStateException("존재하지 않는 회원입니다.");
+       }
+    }
+
+    /**
+     * 회원들 불러오는 api
+     * */
+    public List<Member> getMembers(){
         return memberRepository.findAll();
     }
 
-    public MemberDto findMember(Long id) {
-        Member member = memberRepository.getReferenceById(id);
-        return new MemberDto(member.getEmail(),member.getPassword());
+    /**
+     * 회원 삭제 api
+     * */
+    @Transactional
+    public void deleteMembers(Long id) {
+        try {
+            memberRepository.deleteAllById(Collections.singleton(id));
+        }catch (Exception e){
+            throw new IllegalStateException("존재하지 않는 회원입니다.");
+        }
+
     }
+
 }

@@ -32,35 +32,46 @@ public class MemberApiController {
     /**
     * 회원을 추가하는 api
     * */
-    @PostMapping("/api/v1/setMember")
-    public MemberResponseDto create(@RequestBody @Valid MemberDto memberDto){
-        log.info(" =========== create ===========");
+    @PostMapping("/api/v1/members")
+    public MemberResponseDto createMembers(@RequestBody @Valid MemberDto memberDto){
+        log.info(" =========== createMembers ===========");
 
-        Long id = memberService.create(memberDto);
+        Long id = memberService.createMembers(memberDto);
         return new MemberResponseDto(id);
     }
 
     /**
      * 회원 하나 불러오는 api
      * */
-    @GetMapping("/api/v1/getMember/{id}")
-    public MemberDto memberV1(@PathVariable("id") Long id){
-        log.info(" =========== memberV1 ===========");
+    @GetMapping("/api/v1/members/{id}")
+    public MemberDto getMembers(@PathVariable("id") Long id){
+        log.info(" =========== getMembers One ===========");
         log.info("id : "+id);
-        MemberDto member = memberService.findMember(id);
+        MemberDto member = memberService.getMembers(id);
         return member;
     }
 
     /**
     * 회원들 불러오는 api
     * */
-    @GetMapping("/api/v1/getMembers")
-    public Result membersV1(){
-        log.info(" =========== membersV1 ===========");
-        List<Member> findMembers = memberService.findMembers();
-        List<MemberDto> collect = findMembers.stream().map(m -> new MemberDto(m.getEmail(), m.getPassword())).collect(Collectors.toList());
+    @GetMapping("/api/v1/members")
+    public Result getMembers(){
+        log.info(" =========== getMembers ===========");
+        List<Member> getMembers = memberService.getMembers();
+        List<MemberDto> collect = getMembers.stream().map(m -> new MemberDto(m.getEmail(), m.getPassword())).collect(Collectors.toList());
 
         return new Result(collect.size(), collect);
+    }
+
+    /**
+     * 회원 삭제 api
+     * */
+    @DeleteMapping("/api/v1/members/{id}")
+    public MemberResponseDto deleteMembers(@PathVariable("id") Long id){
+        log.info(" =========== deleteMembers ===========");
+        memberService.deleteMembers(id);
+
+        return new MemberResponseDto(id);
     }
 
 

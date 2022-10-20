@@ -5,6 +5,10 @@ spring:
   devtools:
     livereload:
       enabled: true
+  mvc:
+    hidden-method:
+      filter:
+        enabled: true
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     url: jdbc:sqlserver://211.172.247.228:1433;databaseName=mv;encrypt=false
