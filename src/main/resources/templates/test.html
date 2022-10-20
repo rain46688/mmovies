@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.6.1.js" type="text/javascript"></script>
+    <title>Test</title>
+</head>
+<body>
+
+<div>
+    <input type="file" id="video" name="video" accept="video/*">
+    <button onclick="send()">Submit</button>
+    <button onclick="video()">video</button>
+    <video controls id="view" width="400" height="400"/>
+</div>
+
+</body>
+</html>
+
+<script>
+
+'use strict';
+
+function video(){
+     console.log("video");
+     $.ajax({
+        method : 'get',
+        url : 'api/v1/getVideo/1',
+        success : function (data) {
+                let blob = b64toBlob(data.video, 'video/mp4');
+                $("#view")[0].src = URL.createObjectURL(blob);
+            }
+     });
+}
+
+// 동영상 등록
+function send(){
+    console.clear();
+    console.log("send");
+    let file = $('#video')[0].files[0]
+    let blob = new Blob([file], { type: `${file.type}` });
+    let formData = new FormData();
+    formData.append('blob', blob);
+    formData.append('name', file.name);
+    let blobUrl = URL.createObjectURL(blob);
+    debugger;
+
+    $.ajax({
+            method : "POST",
+            url : 'api/v1/setVideo',
+            processData: false,
+            contentType: false,
+            data : formData,
+            beforeSend: function() {
+            },
+            success : function (data) {
+                console.log("data : ",data);
+            }
+        });
+}
+
+
+//base64를 Blob으로 변환
+function b64toBlob(b64Data,contentType){
+    	var sliceSize=512;
+    	  const byteCharacters = atob(b64Data);
+    	  const byteArrays = [];
+
+    	  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    	    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    	    const byteNumbers = new Array(slice.length);
+    	    for (var i = 0; i < slice.length; i++) {
+    	      byteNumbers[i] = slice.charCodeAt(i);
+    	    }
+
+    	    const byteArray = new Uint8Array(byteNumbers);
+    	    byteArrays.push(byteArray);
+    	  }
+
+    	  const blob = new Blob(byteArrays, {type: contentType});
+    	  return blob;
+    	}
+
+
+</script>
