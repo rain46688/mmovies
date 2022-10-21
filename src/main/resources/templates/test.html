@@ -8,10 +8,16 @@
 <body>
 
 <div>
-    <input type="file" id="video" name="video" accept="video/*">
+    <input type="text" id="ct_id" placeholder="category id">
+    <input type="file" id="content" name="content" accept="video/*">
     <button onclick="send()">Submit</button>
-    <button onclick="video()">video</button>
-    <video controls id="view" width="400" height="400"/>
+    <br/>
+    <br/>
+    <input type="text" id="cid" placeholder="content id">
+    <button onclick="content()">content</button>
+    <br/>
+    <br/>
+<!--    <video controls id="view" width="400" height="400"/>-->
 </div>
 
 </body>
@@ -21,7 +27,7 @@
 
 'use strict';
 
-function video(){
+function content(){
      console.log("video");
      $.ajax({
         method : 'get',
@@ -37,17 +43,19 @@ function video(){
 function send(){
     console.clear();
     console.log("send");
-    let file = $('#video')[0].files[0]
+    let file = $('#content')[0].files[0]
     let blob = new Blob([file], { type: `${file.type}` });
     let formData = new FormData();
-    formData.append('blob', blob);
+    formData.append('src', blob);
     formData.append('name', file.name);
+    formData.append('type', file.type);
+    formData.append('ct_id', $('#ct_id').val());
     let blobUrl = URL.createObjectURL(blob);
     debugger;
 
     $.ajax({
             method : "POST",
-            url : 'api/v1/setVideo',
+            url : 'api/v1/contents',
             processData: false,
             contentType: false,
             data : formData,

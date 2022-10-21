@@ -12,14 +12,20 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Videos")
-public class Video {
+@Table(name = "Contents")
+public class Content {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "video_id")
+    @Column(name = "cid")
     private Long id;
     private String name;
+    private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "ct_id")
+    private Category category;
+
     @Lob
-    private byte[] video;
+    private byte[] src;
 }

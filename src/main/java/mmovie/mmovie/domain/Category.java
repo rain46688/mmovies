@@ -6,20 +6,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Members")
-public class Member {
+@Table(name = "Categorise")
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mid")
+    @Column(name = "ct_id")
     private Long id;
-    private String email;
-    private String password;
+    private String name;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
+    private List<Content> contents;
+
+    public Category(Long id){
+        this.id = id;
+    }
 
 }

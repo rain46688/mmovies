@@ -24,7 +24,7 @@ public class MemberService {
      * 회원을 추가하는 api
      * */
     @Transactional
-    public Long createMembers(MemberDto memberDto) {
+    public Long createMembers(MemberDto memberDto) throws Exception{
 
         Member member = Member.builder()
                 .email(memberDto.getEmail())
@@ -39,7 +39,7 @@ public class MemberService {
     /**
     * 유효성 검사 로직
     * */
-    private void validateDuplicateMember(Member member){
+    private void validateDuplicateMember(Member member) throws Exception{
         List<Member> getMembers = memberRepository.findByEmail(member.getEmail());
         if(getMembers.size() > 0){
             throw new IllegalStateException("이미 존재하는 회원입니다.");
@@ -49,7 +49,7 @@ public class MemberService {
     /**
      * 회원 하나 불러오는 api
      * */
-    public MemberDto getMembers(Long id) {
+    public MemberDto getMembers(Long id) throws Exception{
        try {
            Member member = memberRepository.getReferenceById(id);
            return new MemberDto(member.getEmail(),member.getPassword());
@@ -69,7 +69,7 @@ public class MemberService {
      * 회원 삭제 api
      * */
     @Transactional
-    public void deleteMembers(Long id) {
+    public void deleteMembers(Long id) throws Exception{
         try {
             memberRepository.deleteAllById(Collections.singleton(id));
         }catch (Exception e){

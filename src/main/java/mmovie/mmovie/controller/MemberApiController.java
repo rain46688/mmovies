@@ -2,24 +2,15 @@ package mmovie.mmovie.controller;
 
 import mmovie.mmovie.domain.Member;
 import mmovie.mmovie.dto.MemberDto;
-import mmovie.mmovie.dto.MemberResponseDto;
+import mmovie.mmovie.dto.IdResponseDto;
 import mmovie.mmovie.dto.Result;
 import mmovie.mmovie.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.validation.Valid;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,20 +24,19 @@ public class MemberApiController {
     * 회원을 추가하는 api
     * */
     @PostMapping("/api/v1/members")
-    public MemberResponseDto createMembers(@RequestBody @Valid MemberDto memberDto){
+    public IdResponseDto createMembers(@RequestBody @Valid MemberDto memberDto) throws Exception{
         log.info(" =========== createMembers ===========");
 
         Long id = memberService.createMembers(memberDto);
-        return new MemberResponseDto(id);
+        return new IdResponseDto(id);
     }
 
     /**
      * 회원 하나 불러오는 api
      * */
     @GetMapping("/api/v1/members/{id}")
-    public MemberDto getMembers(@PathVariable("id") Long id){
+    public MemberDto getMembers(@PathVariable("id") Long id) throws Exception{
         log.info(" =========== getMembers One ===========");
-        log.info("id : "+id);
         MemberDto member = memberService.getMembers(id);
         return member;
     }
@@ -67,11 +57,11 @@ public class MemberApiController {
      * 회원 삭제 api
      * */
     @DeleteMapping("/api/v1/members/{id}")
-    public MemberResponseDto deleteMembers(@PathVariable("id") Long id){
+    public IdResponseDto deleteMembers(@PathVariable("id") Long id) throws Exception{
         log.info(" =========== deleteMembers ===========");
         memberService.deleteMembers(id);
 
-        return new MemberResponseDto(id);
+        return new IdResponseDto(id);
     }
 
 

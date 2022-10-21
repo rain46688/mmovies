@@ -4,15 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Lob;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VideoDto {
+public class IdResponseDto {
 
-    private String name;
-    @Lob
-    private byte[] video;
+    private Long id;
 
 }
