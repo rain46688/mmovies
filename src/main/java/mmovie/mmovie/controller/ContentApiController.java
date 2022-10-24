@@ -2,6 +2,7 @@ package mmovie.mmovie.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mmovie.mmovie.common.Convert;
 import mmovie.mmovie.common.FileContent;
 import mmovie.mmovie.domain.Content;
 import mmovie.mmovie.dto.IdResponseDto;
@@ -33,6 +34,8 @@ public class ContentApiController {
 
         if(!file.isEmpty()){
             paramMap.put("src", new FileContent().convertFileToByte(file));
+        }else{
+            throw new IllegalStateException("파일을 제대로 첨부해주세요.");
         }
 
         Long id = contentService.createContents(paramMap);
@@ -44,24 +47,41 @@ public class ContentApiController {
      * 컨텐츠 하나 불러오는 api
      * */
     @GetMapping("/api/v1/contents/{id}")
-    public ContentDto getContents(@PathVariable("id") Long id){
+    public ContentDto getContents(@PathVariable("id") Long id) throws Exception{
         log.info(" =========== getContents ===========");
-        log.info("id : "+id);
         ContentDto content = contentService.getContents(id);
 
         return content;
     }
 
     /**
-     * 비디오들 불러오는 api
+     * 컨텐츠들 불러오는 api
      * */
-    @GetMapping("/api/v1/getVideos")
-    public Result videosV1(){
-        log.info(" =========== videosV1 ===========");
-        List<Content> findMembers = contentService.findVideos();
-        List<ContentDto> collect = findMembers.stream().map(v -> new ContentDto(v.getName(),v.getSrc())).collect(Collectors.toList());
+    @GetMapping("/api/v1/contents")
+    public Result getContents() throws Exception{
+        log.info(" =========== getContents All ===========");
+        List<Content> getContents = contentService.getContents();
+        List<ContentDto> collect = getContents.stream().map(v -> new ContentDto(
+                v.getId(),
+                new Convert().deCoder(v.getName()),
+                new Convert().deCoder(v.getType()),
+                new Convert().deCoder(v.getCategory().getName()),
+                v.getSrc()
+        )).collect(Collectors.toList());
 
         return new Result(collect.size(), collect);
     }
+
+    /**
+     * 컨텐츠 삭제 api
+     * */
+    @DeleteMapping("/api/v1/contents/{id}")
+    public IdResponseDto deleteContents(@PathVariable("id") Long id) throws Exception{
+        log.info(" =========== deleteContents ===========");
+        contentService.deleteContents(id);
+
+        return new IdResponseDto(id);
+    }
+
 
 }

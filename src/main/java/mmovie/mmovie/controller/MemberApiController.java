@@ -36,7 +36,7 @@ public class MemberApiController {
      * */
     @GetMapping("/api/v1/members/{id}")
     public MemberDto getMembers(@PathVariable("id") Long id) throws Exception{
-        log.info(" =========== getMembers One ===========");
+        log.info(" =========== getMembers ===========");
         MemberDto member = memberService.getMembers(id);
         return member;
     }
@@ -45,8 +45,8 @@ public class MemberApiController {
     * 회원들 불러오는 api
     * */
     @GetMapping("/api/v1/members")
-    public Result getMembers(){
-        log.info(" =========== getMembers ===========");
+    public Result getMembers() throws Exception{
+        log.info(" =========== getMembers All ===========");
         List<Member> getMembers = memberService.getMembers();
         List<MemberDto> collect = getMembers.stream().map(m -> new MemberDto(m.getEmail(), m.getPassword())).collect(Collectors.toList());
 

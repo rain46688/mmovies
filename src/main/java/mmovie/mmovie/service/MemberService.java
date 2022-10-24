@@ -61,7 +61,7 @@ public class MemberService {
     /**
      * 회원들 불러오는 api
      * */
-    public List<Member> getMembers(){
+    public List<Member> getMembers() throws Exception{
         return memberRepository.findAll();
     }
 
@@ -71,7 +71,7 @@ public class MemberService {
     @Transactional
     public void deleteMembers(Long id) throws Exception{
         try {
-            memberRepository.deleteAllById(Collections.singleton(id));
+            memberRepository.deleteById(id);
         }catch (Exception e){
             throw new IllegalStateException("존재하지 않는 회원입니다.");
         }

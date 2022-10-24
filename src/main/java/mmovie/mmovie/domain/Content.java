@@ -1,5 +1,6 @@
 package mmovie.mmovie.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,8 +23,10 @@ public class Content {
     private String name;
     private String type;
 
-    @ManyToOne
-    @JoinColumn(name = "ct_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ctId")
+    /* Ignore 안하면 순한 참조에 빠지게됨 */
+    @JsonIgnore
     private Category category;
 
     @Lob

@@ -3,17 +3,17 @@ package mmovie.mmovie.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mmovie.mmovie.domain.Content;
 
-import javax.persistence.Lob;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContentDto {
+public class CategoryResult {
 
     private Long id;
     private String name;
-    private String type;
-    private String cateName;
-    private byte[] src;
+    private int count;
+    private List<Content> contents;
 }
