@@ -3,7 +3,6 @@ package mmovie.mmovie.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mmovie.mmovie.common.Convert;
-import mmovie.mmovie.common.FileContent;
 import mmovie.mmovie.domain.Content;
 import mmovie.mmovie.dto.IdResponseDto;
 import mmovie.mmovie.dto.Result;
@@ -11,7 +10,6 @@ import mmovie.mmovie.dto.ContentDto;
 import mmovie.mmovie.service.ContentService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -28,19 +26,12 @@ public class ContentApiController {
      * 컨텐츠 추가하는 api
      * */
     @PostMapping("/api/v1/contents")
-    public IdResponseDto createContents(@RequestParam Map<String, Object> paramMap, MultipartHttpServletRequest multipartRequest) throws Exception {
-        log.info(" =========== createContents ===========");
-        MultipartFile file = multipartRequest.getFile("src");
+    public IdResponseDto createContentsV2(@RequestParam("file") MultipartFile file, @RequestParam Map<String, Object> paramMap) throws Exception {
+        log.info(" =========== createContentsV2 ===========");
 
-        if(!file.isEmpty()){
-            paramMap.put("src", new FileContent().convertFileToByte(file));
-        }else{
-            throw new IllegalStateException("파일을 제대로 첨부해주세요.");
-        }
+            Long id = contentService.createContents(file, (String) paramMap.get("ctId"));
 
-        Long id = contentService.createContents(paramMap);
-
-        return new IdResponseDto(id);
+            return new IdResponseDto(id);
     }
 
     /**

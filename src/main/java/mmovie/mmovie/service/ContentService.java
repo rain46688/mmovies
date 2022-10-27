@@ -10,6 +10,9 @@ import mmovie.mmovie.dto.ContentDto;
 import mmovie.mmovie.repository.ContentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Base64;
 import java.util.List;
@@ -24,19 +27,21 @@ public class ContentService {
     private final ContentRepository contentRepository;
 
     @Transactional
-    public Long createContents(Map<String, Object> paramMap) throws Exception {
+    public Long createContents(MultipartFile file, String cid) throws Exception {
+        // VM 옵션 -Xms4096m -Xmx7168m 붙여야됨
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-        Content content = Content.builder()
-                .name(new Convert().enCoder(((String)paramMap.get("name"))))
-                .type(new Convert().enCoder(((String)paramMap.get("type"))))
-                .category(new Category(Long.valueOf((String)paramMap.get("ctId"))))
-                .src((byte[])paramMap.get("src"))
-                .build();
+            Content content = Content.builder()
+                    .name(new Convert().enCoder(fileName))
+                    .type(new Convert().enCoder(file.getContentType()))
+                    .category(new Category(Long.valueOf(cid)))
+                    .src(file.getBytes())
+                    .build();
 
-        validateDuplicateContent(content);
-        contentRepository.save(content);
+            validateDuplicateContent(content);
+            contentRepository.save(content);
 
-        return content.getId();
+            return content.getId();
     }
 
     /**
@@ -77,6 +82,7 @@ public class ContentService {
             throw new IllegalStateException("존재하지 않는 컨텐츠입니다.");
         }
     }
+
 
 
 }

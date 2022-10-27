@@ -5,6 +5,10 @@ spring:
   devtools:
     livereload:
       enabled: true
+  servlet:
+    multipart:
+      maxFileSize: 150MB
+      maxRequestSize: 150MB
   mvc:
     hidden-method:
       filter:

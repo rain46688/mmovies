@@ -17,7 +17,7 @@
     <button onclick="content()">content</button>
     <br/>
     <br/>
-<!--    <video controls id="view" width="400" height="400"/>-->
+    <div id="box"></div>
 </div>
 
 </body>
@@ -31,9 +31,12 @@ function content(){
      console.log("video");
      $.ajax({
         method : 'get',
-        url : 'api/v1/getVideo/1',
+        url : 'api/v1/contents/'+$('#cid').val(),
         success : function (data) {
-                let blob = b64toBlob(data.video, 'video/mp4');
+                console.log('data : ',data);
+                let blob = b64toBlob(data.src, 'video/mp4');
+                $('#box').html('');
+                $('#box').html("<p>"+data.name+"</p><video controls id='view' width='200' height='200'/>")
                 $("#view")[0].src = URL.createObjectURL(blob);
             }
      });
@@ -44,14 +47,9 @@ function send(){
     console.clear();
     console.log("send");
     let file = $('#content')[0].files[0]
-    let blob = new Blob([file], { type: `${file.type}` });
     let formData = new FormData();
-    formData.append('src', blob);
-    formData.append('name', file.name);
-    formData.append('type', file.type);
+    formData.append('file', file);
     formData.append('ctId', $('#ctId').val());
-    let blobUrl = URL.createObjectURL(blob);
-    debugger;
 
     $.ajax({
             method : "POST",
@@ -63,6 +61,10 @@ function send(){
             },
             success : function (data) {
                 console.log("data : ",data);
+            },
+            error : function (e){
+                console.log("error : ",e);
+                debugger;
             }
         });
 }
