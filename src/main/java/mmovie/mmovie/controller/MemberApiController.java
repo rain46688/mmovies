@@ -1,12 +1,13 @@
 package mmovie.mmovie.controller;
 
-import mmovie.mmovie.domain.Member;
-import mmovie.mmovie.dto.MemberDto;
-import mmovie.mmovie.dto.IdResponseDto;
-import mmovie.mmovie.dto.Result;
-import mmovie.mmovie.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mmovie.mmovie.domain.Member;
+import mmovie.mmovie.dto.IdResponseDto;
+import mmovie.mmovie.dto.MemberDto;
+import mmovie.mmovie.dto.Result;
+import mmovie.mmovie.dto.TokenInfo;
+import mmovie.mmovie.service.MemberService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -62,6 +63,15 @@ public class MemberApiController {
         memberService.deleteMembers(id);
 
         return new IdResponseDto(id);
+    }
+
+    @PostMapping("/login")
+    public TokenInfo login(@RequestBody MemberDto memberDto) {
+        log.info("=== login");
+        String memberId = memberDto.getEmail();
+        String password = memberDto.getPassword();
+        TokenInfo tokenInfo = memberService.login(memberId, password);
+        return tokenInfo;
     }
 
 

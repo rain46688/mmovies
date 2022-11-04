@@ -2,18 +2,20 @@ package mmovie.mmovie.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mmovie.mmovie.common.JwtTokenProvider;
 import mmovie.mmovie.domain.Member;
 import mmovie.mmovie.dto.MemberDto;
+import mmovie.mmovie.dto.TokenInfo;
 import mmovie.mmovie.repository.MemberRepository;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,6 +24,10 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 회원을 추가하는 api
@@ -29,9 +35,13 @@ public class MemberService {
     @Transactional
     public Long createMembers(MemberDto memberDto) throws Exception{
 
+        List<String> roles = new ArrayList<String>();
+        roles.add(0, "ADMIN");
+
         Member member = Member.builder()
                 .email(memberDto.getEmail())
-                .password(memberDto.getPassword())
+                .password(passwordEncoder.encode(memberDto.getPassword()))
+                .roles(roles)
                 .build();
 
         validateDuplicateMember(member); // 중복 회원 검증
@@ -40,10 +50,11 @@ public class MemberService {
     }
 
     /**
-    * 유효성 검사 로직
-    * */
+     * 유효성 검사 로직
+     * */
     private void validateDuplicateMember(Member member) throws Exception{
         List<Member> getMembers = memberRepository.findByEmail(member.getEmail());
+        log.info(" test : "+getMembers);
         if(getMembers.size() > 0){
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
@@ -53,12 +64,12 @@ public class MemberService {
      * 회원 하나 불러오는 api
      * */
     public MemberDto getMembers(Long id) throws Exception{
-       try {
-           Member member = memberRepository.getReferenceById(id);
-           return new MemberDto(member.getEmail(),member.getPassword());
-       }catch (Exception e){
-           throw new IllegalStateException("존재하지 않는 회원입니다.");
-       }
+        try {
+            Member member = memberRepository.getReferenceById(id);
+            return new MemberDto(member.getEmail(),member.getPassword());
+        }catch (Exception e){
+            throw new IllegalStateException("존재하지 않는 회원입니다.");
+        }
     }
 
     /**
@@ -82,24 +93,10 @@ public class MemberService {
     }
 
     @Transactional
-    public UserDetails loadUserByUsername(final String email) {
-        return memberRepository.findOneWithAuthoritiesByEmail(email)
-                .map(user -> createUser(email, user))
-                .orElseThrow(() -> new UsernameNotFoundException(email + " -> 데이터베이스에서 찾을 수 없습니다."));
+    public TokenInfo login(String memberId, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        return tokenInfo;
     }
-
-    private org.springframework.security.core.userdetails.User createUser(String username, Member member) {
-
-        List<GrantedAuthority> grantedAuthorities = member.getAuthorities().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
-                .collect(Collectors.toList());
-
-        return new org.springframework.security.core.userdetails.User(member.getEmail(),
-                member.getPassword(),
-                grantedAuthorities);
-    }
-
-
-
-
 }
