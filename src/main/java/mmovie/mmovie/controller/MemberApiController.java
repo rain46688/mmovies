@@ -66,13 +66,17 @@ public class MemberApiController {
     }
 
     @PostMapping("/login")
-    public TokenInfo login(@RequestBody MemberDto memberDto) {
-        log.info("=== login");
+    public TokenInfo login(@RequestBody MemberDto memberDto) throws Exception{
+        log.info(" =========== login ===========");
         String memberId = memberDto.getEmail();
         String password = memberDto.getPassword();
+
+        log.info("memberId : "+memberId);
+        log.info("password : "+password);
+
         TokenInfo tokenInfo = memberService.login(memberId, password);
+
         return tokenInfo;
     }
-
 
 }

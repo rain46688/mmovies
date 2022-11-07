@@ -26,8 +26,8 @@ public class ContentApiController {
      * 컨텐츠 추가하는 api
      * */
     @PostMapping("/api/v1/contents")
-    public IdResponseDto createContentsV2(@RequestParam("file") MultipartFile file, @RequestParam Map<String, Object> paramMap) throws Exception {
-        log.info(" =========== createContentsV2 ===========");
+    public IdResponseDto createContents(@RequestParam("file") MultipartFile file, @RequestParam Map<String, Object> paramMap) throws Exception {
+        log.info(" =========== createContents ===========");
 
             Long id = contentService.createContents(file, (String) paramMap.get("ctId"));
 

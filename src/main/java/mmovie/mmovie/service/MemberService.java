@@ -93,7 +93,7 @@ public class MemberService {
     }
 
     @Transactional
-    public TokenInfo login(String memberId, String password) {
+    public TokenInfo login(String memberId, String password) throws Exception{
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
