@@ -3,14 +3,23 @@ package mmovie.mmovie.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mmovie.mmovie.common.Convert;
+import mmovie.mmovie.common.FileUtil;
 import mmovie.mmovie.domain.Content;
+import mmovie.mmovie.dto.ContentDto;
 import mmovie.mmovie.dto.IdResponseDto;
 import mmovie.mmovie.dto.Result;
-import mmovie.mmovie.dto.ContentDto;
 import mmovie.mmovie.service.ContentService;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.common.model.Picture;
+import org.jcodec.scale.AWTUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,9 +38,25 @@ public class ContentApiController {
     public IdResponseDto createContents(@RequestParam("file") MultipartFile file, @RequestParam Map<String, Object> paramMap) throws Exception {
         log.info(" =========== createContents ===========");
 
-            Long id = contentService.createContents(file, (String) paramMap.get("ctId"));
+        File source = new FileUtil().multipartFileToFile(file);
 
-            return new IdResponseDto(id);
+        int frameNumber = 42;
+        Picture picture = FrameGrab.getFrameFromFile(source, frameNumber);
+
+        //for JDK (jcodec-javase)
+        BufferedImage bufferedImage = AWTUtil.toBufferedImage(picture);
+//        ImageIO.write(bufferedImage, "png",new File("contents\\" + file.getOriginalFilename() + ".png"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", output);
+        String imageAsBase64 = Base64.getEncoder().encodeToString(output.toByteArray());
+        output.close();
+
+        new FileUtil().deleteFile(".\\contents");
+
+        Long id = contentService.createContents(file, (String) paramMap.get("ctId"), imageAsBase64);
+
+        return new IdResponseDto(id);
     }
 
     /**
@@ -57,7 +82,8 @@ public class ContentApiController {
                 new Convert().deCoder(v.getName()),
                 new Convert().deCoder(v.getType()),
                 new Convert().deCoder(v.getCategory().getName()),
-                v.getSrc()
+                v.getSrc(),
+                v.getThumbnailSrc()
         )).collect(Collectors.toList());
 
         return new Result(collect.size(), collect);
@@ -73,6 +99,5 @@ public class ContentApiController {
 
         return new IdResponseDto(id);
     }
-
 
 }

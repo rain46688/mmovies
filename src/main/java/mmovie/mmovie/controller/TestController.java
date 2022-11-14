@@ -17,6 +17,9 @@ public class TestController {
         return "test";
     }
 
+    /**
+     * 로그인 임시 페이지
+     * */
     @GetMapping("/login")
     public String Login(Model model){
         log.info(" =========== Login ===========");

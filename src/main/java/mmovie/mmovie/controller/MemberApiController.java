@@ -65,6 +65,9 @@ public class MemberApiController {
         return new IdResponseDto(id);
     }
 
+    /**
+     * 로그인 로직
+     * */
     @PostMapping("/login")
     public TokenInfo login(@RequestBody MemberDto memberDto) throws Exception{
         log.info(" =========== login ===========");

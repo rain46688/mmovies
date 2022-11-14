@@ -11,7 +11,6 @@ import mmovie.mmovie.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,7 +55,8 @@ public class CategoryService {
                     new Convert().deCoder(c.getName()),
                     new Convert().deCoder(c.getType()),
                     c.getCategory(),
-                    c.getSrc()
+                    c.getSrc(),
+                    c.getThumbnailSrc()
             )).collect(Collectors.toList());
 
             return new CategoryResult(category.getId(),new Convert().deCoder(category.getName()),getContents.size(),getContents);

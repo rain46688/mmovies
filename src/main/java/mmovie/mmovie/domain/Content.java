@@ -31,4 +31,7 @@ public class Content {
 
     @Lob
     private byte[] src;
+
+    @Column(length = 10000)
+    private String thumbnailSrc;
 }

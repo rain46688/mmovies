@@ -17,7 +17,8 @@
     <button onclick="content()">content</button>
     <br/>
     <br/>
-    <div id="box"></div>
+    <div id="box">
+    </div>
 </div>
 
 </body>
@@ -36,7 +37,8 @@ function content(){
                 console.log('data : ',data);
                 let blob = b64toBlob(data.src, 'video/mp4');
                 $('#box').html('');
-                $('#box').html("<p>"+data.name+"</p><video controls id='view' width='200' height='200'/>")
+                $('#box').html("<p>"+data.name+"</p><video controls id='view' width='200' height='200'/><br/>")
+                $('#box').append("<img width='200' height='200' src='data:image/png;base64,"+data.thumbnailSrc+"' />");
                 $("#view")[0].src = URL.createObjectURL(blob);
             }
      });
@@ -45,11 +47,13 @@ function content(){
 // 동영상 등록
 function send(){
     console.clear();
-    console.log("send");
+    console.log("send3");
     let file = $('#content')[0].files[0]
     let formData = new FormData();
     formData.append('file', file);
     formData.append('ctId', $('#ctId').val());
+
+    debugger;
 
     $.ajax({
             method : "POST",
@@ -67,7 +71,6 @@ function send(){
             }
         });
 }
-
 
 //base64를 Blob으로 변환
 function b64toBlob(b64Data,contentType){
