@@ -49,7 +49,7 @@ public class MemberApiController {
     public Result getMembers() throws Exception{
         log.info(" =========== getMembers All ===========");
         List<Member> getMembers = memberService.getMembers();
-        List<MemberDto> collect = getMembers.stream().map(m -> new MemberDto(m.getEmail(), m.getPassword())).collect(Collectors.toList());
+        List<MemberDto> collect = getMembers.stream().map(m -> new MemberDto(m.getEmail(), m.getPassword(), m.getRoles().get(0))).collect(Collectors.toList());
 
         return new Result(collect.size(), collect);
     }

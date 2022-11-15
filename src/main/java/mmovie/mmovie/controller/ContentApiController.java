@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mmovie.mmovie.common.Convert;
 import mmovie.mmovie.common.FileUtil;
-import mmovie.mmovie.domain.Content;
 import mmovie.mmovie.dto.ContentDto;
+import mmovie.mmovie.dto.ContentThumbDto;
 import mmovie.mmovie.dto.IdResponseDto;
 import mmovie.mmovie.dto.Result;
 import mmovie.mmovie.service.ContentService;
@@ -74,15 +74,14 @@ public class ContentApiController {
      * 컨텐츠들 불러오는 api
      * */
     @GetMapping("/api/v1/contents")
-    public Result getContents() throws Exception{
-        log.info(" =========== getContents All ===========");
-        List<Content> getContents = contentService.getContents();
-        List<ContentDto> collect = getContents.stream().map(v -> new ContentDto(
-                v.getId(),
+    public Result getContentsCms() throws Exception {
+        List<ContentThumbDto> getContents = contentService.getContents();
+
+        List<ContentThumbDto> collect = getContents.stream().map(v -> new ContentThumbDto(
+            v.getId(),
                 new Convert().deCoder(v.getName()),
-                new Convert().deCoder(v.getType()),
-                new Convert().deCoder(v.getCategory().getName()),
-                v.getSrc(),
+                new Convert().deCoder(v.getCateName()),
+                v.getCateId(),
                 v.getThumbnailSrc()
         )).collect(Collectors.toList());
 

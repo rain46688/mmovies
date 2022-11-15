@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberDto {
+public class ContentThumbCateDto {
 
-    private String email;
-    private String password;
-    private String roles;
-
+     private Long id;
+     private String name;
+     private String thumbnailSrc;
+     
 }

@@ -6,6 +6,7 @@ import mmovie.mmovie.common.Convert;
 import mmovie.mmovie.domain.Category;
 import mmovie.mmovie.domain.Content;
 import mmovie.mmovie.dto.ContentDto;
+import mmovie.mmovie.dto.ContentThumbDto;
 import mmovie.mmovie.repository.ContentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,8 +69,8 @@ public class ContentService {
         }
     }
 
-    public List<Content> getContents() {
-        return contentRepository.findAll();
+    public List<ContentThumbDto> getContents() {
+        return contentRepository.findContentAll();
     }
 
     @Transactional

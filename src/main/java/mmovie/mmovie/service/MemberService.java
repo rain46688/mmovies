@@ -66,7 +66,7 @@ public class MemberService {
     public MemberDto getMembers(Long id) throws Exception{
         try {
             Member member = memberRepository.getReferenceById(id);
-            return new MemberDto(member.getEmail(),member.getPassword());
+            return new MemberDto(member.getEmail(),member.getPassword(), member.getRoles().get(0));
         }catch (Exception e){
             throw new IllegalStateException("존재하지 않는 회원입니다.");
         }
