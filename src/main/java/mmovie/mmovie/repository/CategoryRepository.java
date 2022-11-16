@@ -14,6 +14,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("select " +
             "new mmovie.mmovie.dto.ContentThumbDto(a.id, a.name, b.name, b.id, a.thumbnailSrc) " +
             "from " +
-            "Content a inner join Category b on a.category.id = :id")
+            "Content a inner join Category b on a.category.id = b.id " +
+            "where " +
+            "a.category.id = :id")
     List<ContentThumbDto> getContentReferenceById(@Param("id") Long id);
 }
