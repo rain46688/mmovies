@@ -10,6 +10,8 @@ import mmovie.mmovie.dto.IdResponseDto;
 import mmovie.mmovie.dto.Result;
 import mmovie.mmovie.service.ContentService;
 import org.jcodec.api.FrameGrab;
+import org.jcodec.common.DemuxerTrack;
+import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +42,31 @@ public class ContentApiController {
 
         File source = new FileUtil().multipartFileToFile(file);
 
-        int frameNumber = 42;
+        log.info(" === file : "+file);
+        log.info(" === paramMap : "+paramMap);
+        log.info(" === source : "+source);
+
+        log.info("1 : "+NIOUtils.readableChannel(source));
+
+        FrameGrab grab = FrameGrab.createFrameGrab(NIOUtils.readableChannel(source));
+
+        log.info(" === grab : "+grab);
+
+        DemuxerTrack vt = grab.getVideoTrack();
+
+        log.info(" === vt : "+vt);
+
+        int count = vt.getMeta().getTotalFrames();
+        log.info("=== count : "+count);
+
+        int frameNumber = count / 2;
         Picture picture = FrameGrab.getFrameFromFile(source, frameNumber);
 
-        //for JDK (jcodec-javase)
+        log.info(" === test1");
+
         BufferedImage bufferedImage = AWTUtil.toBufferedImage(picture);
-//        ImageIO.write(bufferedImage, "png",new File("contents\\" + file.getOriginalFilename() + ".png"));
+
+        log.info(" === test2");
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", output);
@@ -54,7 +75,11 @@ public class ContentApiController {
 
         new FileUtil().deleteFile(".\\contents");
 
+        log.info(" === test3");
+
         Long id = contentService.createContents(file, (String) paramMap.get("ctId"), imageAsBase64);
+
+        log.info(" === test4");
 
         return new IdResponseDto(id);
     }

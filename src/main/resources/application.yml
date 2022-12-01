@@ -1,5 +1,6 @@
 server:
   port: 9999
+  connection-timeout: 1800000
 
 spring:
   devtools:
@@ -7,8 +8,8 @@ spring:
       enabled: true
   servlet:
     multipart:
-      maxFileSize: 150MB
-      maxRequestSize: 150MB
+      maxFileSize: 300MB
+      maxRequestSize: 300MB
   mvc:
     hidden-method:
       filter:
@@ -27,6 +28,10 @@ spring:
       use-new-id-generator-mappings: false
     show-sql: true
     properties:
+      javax:
+        persistence:
+          query:
+            timeout: 1800000
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100

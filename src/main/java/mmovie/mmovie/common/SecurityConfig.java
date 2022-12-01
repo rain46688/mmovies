@@ -30,10 +30,9 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/login").permitAll()
-//                .antMatchers("/api/v1/members").permitAll()
-//                .antMatchers("/api/v1/**").hasRole("ADMIN")
-                .antMatchers("/**").permitAll()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/**").hasRole("ADMIN")
+//                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
